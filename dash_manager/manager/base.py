@@ -85,9 +85,11 @@ class BaseView(BaseViewMetaClass):
         """
             Embed and secure the application on a single server
         """
-        self.app.init_app(server.server)
         self.app.config['external_scripts'] += server.external_scripts or [] + server.template.add_external_scripts()
         self.app.config['external_stylesheets'] += server.external_stylesheets  or [] + server.template.add_external_stylesheets()
+        self.app.config['title'] = self.app.config['name']
+        self.app.title = f'{self.category}: {self.app.config["name"]}' if self.category else self.app.config['name']
+        self.app.init_app(server.server)
         server.template._app_shell(self.app)
         
         for view_func in server.server.view_functions:            
@@ -107,7 +109,6 @@ class BaseView(BaseViewMetaClass):
             return func(*args, **kwargs)
 
         return decorated_view
-
 
 class DashManager:
     """
@@ -158,7 +159,7 @@ class DashManager:
         self.config = server.config
         self.base_url = url
 
-        self._view = []
+        self._dashapps = []
         self._views = []
         self._menu = []
         self._menu_categories = dict()
@@ -197,7 +198,8 @@ class DashManager:
         view.embed(self)
         # Add to views
         self._views.append(view)
-        
+        self._dashapps.append(view.app)
+
         if view.is_visible():
             self._add_view_to_menu(view)
 
@@ -361,8 +363,9 @@ class DashManager:
         except Exception as e:
             e.args = [f"Expecting an integer from 1 to 65535, found port={repr(port)}"]
             raise
-        
-        for dashapp in self._view:
+
+        for dashapp in self._dashapps:
+            
             debug = dashapp.enable_dev_tools(
                 debug,
                 dev_tools_ui,
