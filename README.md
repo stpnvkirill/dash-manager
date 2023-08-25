@@ -13,7 +13,7 @@ manager = DashManager()
 
 
 # Pages
-page = Dash(name='First Dashboard', title='Дашборд')
+page = Dash(name='First Dashboard')
 page.layout = lambda: html.Div('This is First Dashboard')
 
 page2 = Dash(name='Second Dashboard', url_base_pathname='/two/')
