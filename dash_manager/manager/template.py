@@ -9,6 +9,7 @@
     of the classes below
 """
 
+import copy
 
 import dash_bootstrap_components as dbc
 import dash_mantine_components as dmc
@@ -31,7 +32,9 @@ class BaseTemplate(object):
         """
         self.manager = manager
 
-    def navbar(self, menu: list):
+        manager.add_links(*self.add_links())
+
+    def navbar(self, menu: list, links: list):
         """
             Override this method to create a custom navigation bar
 
@@ -82,16 +85,23 @@ class BaseTemplate(object):
         """
         return []
 
+    def add_links(self):
+        """
+            Override this method to add links to menu links collection.
+        """
+        return []
+
     def _layout(self, dash_app):
         server = self.manager.server
         layout = dash_app.layout
         layout = layout() if callable(layout) else layout
         menu_structure = self.manager.menu()
+        links = self.manager._menu_links
 
         def shell():
             with server.app_context():
                 res = self.app_container(self.navbar(
-                    menu_structure), layout, self.footer())
+                    menu_structure, links), layout, self.footer())
                 return res
 
         return shell
@@ -104,7 +114,11 @@ class BaseTemplate(object):
 class BootstrapTemplate(BaseTemplate):
     FLUID = False
 
-    def navbar(self, menu: list):
+    def add_links(self):
+        return [dbc.Button(DashIconify(icon='radix-icons:blending-mode', height=25),
+                           color='secondary', id="color-scheme-toggle", n_clicks=0)]
+
+    def navbar(self, menu: list, links: list):
         nav = [
             dbc.NavbarBrand(self.manager.logo()),
             dbc.Nav(
@@ -134,8 +148,7 @@ class BootstrapTemplate(BaseTemplate):
                         navbar=True,
                     ),
                     html.Div(className="d-flex align-items-center",
-                             children=dbc.Button(DashIconify(icon='radix-icons:blending-mode', height=25),
-                                                 color='secondary', id="color-scheme-toggle"), n_clicks=0)
+                             children=links)
                 ],
                 fluid=self.FLUID
             ),
@@ -193,7 +206,19 @@ class MantineTemplate(BaseTemplate):
     THEME = {}
     CONTAINER_SIZE = 'xxl'
 
-    def nav_link(self, menu_item: dict):
+    def add_links(self):
+        return [dmc.ActionIcon(
+            DashIconify(
+                icon='radix-icons:blending-mode', width=22
+            ),
+            variant="outline",
+            radius='md',
+            size=36,
+            color='yellow',
+            id='color-scheme-toggle',
+        )]
+
+    def nav_link(self, menu_item):
         if menu_item.is_category():
             return dmc.Menu(
                 [
@@ -210,7 +235,7 @@ class MantineTemplate(BaseTemplate):
                                 menu_i.name,
                                 href=menu_i.get_url(),
                                 refresh=True,
-                                icon=menu_item.icon,
+                                icon=menu_i.icon,
                             )
                             for menu_i in menu_item.get_children()
                         ]
@@ -251,8 +276,18 @@ class MantineTemplate(BaseTemplate):
                 styles={"display": "none"},
             )])
         return self.manager.logo()
-    
-    def navbar(self, menu: list):
+
+    def mobile_link(self, link):
+        try:
+            link = copy.deepcopy(link)
+            if link.id:
+                link.id += '-dropdown'
+
+            return link
+        except:
+            return link
+
+    def navbar(self, menu: list, links: list):
         nav_cont = dmc.Grid(
             children=[
                 dmc.Col(
@@ -277,19 +312,10 @@ class MantineTemplate(BaseTemplate):
                         position="right",
                         spacing="md",
                         children=[dmc.MediaQuery(
-                            dmc.ActionIcon(
-                                DashIconify(
-                                    icon='radix-icons:blending-mode', width=22
-                                ),
-                                variant="outline",
-                                radius='md',
-                                size=36,
-                                color='yellow',
-                                id='color-scheme-toggle',
-                            ),
+                            link,
                             smallerThan="lg",
-                            styles={"display": "none"},
-                        )] +
+                            styles={"display": "none"},)
+                         for link in links] +
                         [
                             dmc.MediaQuery(
                                 dmc.Menu(
@@ -305,10 +331,6 @@ class MantineTemplate(BaseTemplate):
                                                 size='lg',
                                             )),
                                         dmc.MenuDropdown(
-                                            [dmc.MenuItem('Theme', icon=DashIconify(icon='radix-icons:blending-mode'),
-                                                          py=5, id='color-scheme-toggle-dropdown'),
-                                             dmc.MenuDivider()
-                                             ] +
                                             sum([
                                                 sum([[dmc.MenuLabel(
                                                     menu_item.name, miw=200, py=5)],
@@ -327,7 +349,14 @@ class MantineTemplate(BaseTemplate):
                                                     py=5, refresh=True
                                                 )]
                                                 for menu_item in menu
-                                            ], []),
+                                            ], [])
+                                            +
+                                            [
+                                                dmc.MenuDivider(),
+                                                dmc.SimpleGrid(
+                                                    [
+                                                        self.mobile_link(link) for link in links
+                                                    ], cols=4, my=10)],
                                             miw=200,
                                             style={'z-index': '30000'}
                                         )

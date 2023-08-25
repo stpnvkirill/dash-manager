@@ -163,6 +163,7 @@ class DashManager:
         self._views = []
         self._menu = []
         self._menu_categories = dict()
+        self._menu_links = []
 
         if isinstance(category_icon, dict):
             self.category_icon = category_icon
@@ -219,6 +220,48 @@ class DashManager:
         for view in args:
             self.add_view(view)
 
+    def add_link(self, link:Component):
+        """
+            Add link to menu links collection.
+
+            :param link:
+                Link to add.
+            
+            Example:
+
+            ```python
+            manger.add_link(
+                dmc.ActionIcon(
+                    DashIconify(
+                        icon='radix-icons:blending-mode', width=22
+                    ),
+                    variant="outline",
+                    radius='md',
+                    size=36,
+                    color='yellow',
+                    id='color-scheme-toggle',
+                )
+            )
+            ```
+        """
+        self._menu_links.append(link)
+
+    def add_links(self, *args):
+        """
+            Add one or more links to the menu links collection.
+
+            Examples::
+
+                admin.add_links(link1)
+                admin.add_links(link1, link2, link3, link4)
+                admin.add_links(*my_list)
+
+            :param args:
+                Argument list including the links to add.
+        """
+        for link in args:
+            self.add_link(link)
+
     def add_menu_item(self, menu_item, target_category=None):
         """
             Add menu item to menu tree hierarchy.
@@ -234,7 +277,7 @@ class DashManager:
             # create a new menu category if one does not exist already
             if category is None:
                 category = MenuCategory(target_category)
-                category.icon_category = self.category_icon.get(target_category)
+                category.icon = self.category_icon.get(target_category)
                 self._menu_categories[target_category] = category
 
                 self._menu.append(category)

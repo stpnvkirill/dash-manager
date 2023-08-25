@@ -9,7 +9,7 @@ from dash_manager import DashManager, BaseView
 from dash import Dash,html
 
 
-manager = DashManager()
+manager = DashManager(template_mode='bootstrap') # or mantine
 
 
 # Pages
