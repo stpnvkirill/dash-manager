@@ -68,3 +68,15 @@ class MenuView(BaseMenu):
 
         return url
 
+
+class MenuBluprint(BaseMenu):
+    def __init__(self, name, url_prefix, icon=None, manager=None):
+        super(MenuBluprint, self).__init__(name,
+                                       icon=icon,
+                                       manager=manager)
+
+
+        self.href = url_prefix
+
+    def get_url(self):
+        return self.href

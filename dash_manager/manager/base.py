@@ -9,12 +9,13 @@
 """
 
 import os 
+import typing
 
 from dash import Dash
 from functools import wraps
-from flask import Flask, abort
+from flask import Flask, Blueprint, abort
 from flask.ctx import AppContext
-from .menu import MenuCategory, MenuView
+from .menu import MenuCategory, MenuView, MenuBluprint
 from dash.development.base_component import Component
 from .template import BaseTemplate, BootstrapTemplate, MantineTemplate
 
@@ -262,6 +263,38 @@ class DashManager:
         for link in args:
             self.add_link(link)
 
+    def register_blueprint(self, blueprint: Blueprint, name=None, category=None, menu_icon=None, visible=True, **options: typing.Any,) -> None:
+        """
+            Register a :class:`~flask.Blueprint` on the application. Keyword
+            arguments passed to this method will override the defaults set on the
+            blueprint.
+
+            :param name:
+                Name of this view. If not provided, will default to the class name.
+            :param category:
+                View category. If not provided, this view will be shown as a top-level menu item.
+            :param menu_icon:
+                Icon name or DashIconify instance
+            :param visible: 
+                Visible in navbar
+
+            Calls the blueprint's :meth:`~flask.Blueprint.register` method after
+            recording the blueprint in the application's :attr:`blueprints`.
+
+            :param blueprint: The blueprint to register.
+            :param url_prefix: Blueprint routes will be prefixed with this.
+            :param subdomain: Blueprint routes will match on this subdomain.
+            :param url_defaults: Blueprint routes will use these default values for
+                view arguments.
+            :param options: Additional keyword arguments are passed to
+                :class:`~flask.blueprints.BlueprintSetupState`. They can be
+                accessed in :meth:`~flask.Blueprint.record` callbacks.
+        """
+        blueprint.register(self.server, options)
+
+        if visible:
+            self.add_menu_item(MenuBluprint(name, options.get('url_prefix'), menu_icon, self), category)
+
     def add_menu_item(self, menu_item, target_category=None):
         """
             Add menu item to menu tree hierarchy.
@@ -293,7 +326,7 @@ class DashManager:
             :param view:
                 View to add
         """
-        self.add_menu_item(MenuView(view.name, view), view.category)
+        self.add_menu_item(MenuView(view.name, view), view.category)      
 
     def init_app(self, server):
         if server is not None:
@@ -319,84 +352,83 @@ class DashManager:
         dev_tools_prune_errors=None,
         **flask_run_options,
     )  -> None:
-        """Start the flask server in local mode, you should not run this on a
-        production server, use gunicorn/waitress instead.
+        """
+            Start the flask server in local mode, you should not run this on a
+            production server, use gunicorn/waitress instead.
 
-        If a parameter can be set by an environment variable, that is listed
-        too. Values provided here take precedence over environment variables.
+            If a parameter can be set by an environment variable, that is listed
+            too. Values provided here take precedence over environment variables.
 
-        :param host: Host IP used to serve the application
-            env: ``HOST``
-        :type host: string
+            :param host: Host IP used to serve the application
+                env: ``HOST``
+            :type host: string
 
-        :param port: Port used to serve the application
-            env: ``PORT``
-        :type port: int
+            :param port: Port used to serve the application
+                env: ``PORT``
+            :type port: int
 
-        :param proxy: If this application will be served to a different URL
-            via a proxy configured outside of Python, you can list it here
-            as a string of the form ``"{input}::{output}"``, for example:
-            ``"http://0.0.0.0:8050::https://my.domain.com"``
-            so that the startup message will display an accurate URL.
-            env: ``DASH_PROXY``
-        :type proxy: string
+            :param proxy: If this application will be served to a different URL
+                via a proxy configured outside of Python, you can list it here
+                as a string of the form ``"{input}::{output}"``, for example:
+                ``"http://0.0.0.0:8050::https://my.domain.com"``
+                so that the startup message will display an accurate URL.
+                env: ``DASH_PROXY``
+            :type proxy: string
 
-        :param debug: Set Flask debug mode and enable dev tools.
-            env: ``DASH_DEBUG``
-        :type debug: bool
+            :param debug: Set Flask debug mode and enable dev tools.
+                env: ``DASH_DEBUG``
+            :type debug: bool
 
-        :param debug: Enable/disable all the dev tools unless overridden by the
-            arguments or environment variables. Default is ``True`` when
-            ``enable_dev_tools`` is called directly, and ``False`` when called
-            via ``run``. env: ``DASH_DEBUG``
-        :type debug: bool
+            :param debug: Enable/disable all the dev tools unless overridden by the
+                arguments or environment variables. Default is ``True`` when
+                ``enable_dev_tools`` is called directly, and ``False`` when called
+                via ``run``. env: ``DASH_DEBUG``
+            :type debug: bool
 
-        :param dev_tools_ui: Show the dev tools UI. env: ``DASH_UI``
-        :type dev_tools_ui: bool
+            :param dev_tools_ui: Show the dev tools UI. env: ``DASH_UI``
+            :type dev_tools_ui: bool
 
-        :param dev_tools_props_check: Validate the types and values of Dash
-            component props. env: ``DASH_PROPS_CHECK``
-        :type dev_tools_props_check: bool
+            :param dev_tools_props_check: Validate the types and values of Dash
+                component props. env: ``DASH_PROPS_CHECK``
+            :type dev_tools_props_check: bool
 
-        :param dev_tools_serve_dev_bundles: Serve the dev bundles. Production
-            bundles do not necessarily include all the dev tools code.
-            env: ``DASH_SERVE_DEV_BUNDLES``
-        :type dev_tools_serve_dev_bundles: bool
+            :param dev_tools_serve_dev_bundles: Serve the dev bundles. Production
+                bundles do not necessarily include all the dev tools code.
+                env: ``DASH_SERVE_DEV_BUNDLES``
+            :type dev_tools_serve_dev_bundles: bool
 
-        :param dev_tools_hot_reload: Activate hot reloading when app, assets,
-            and component files change. env: ``DASH_HOT_RELOAD``
-        :type dev_tools_hot_reload: bool
+            :param dev_tools_hot_reload: Activate hot reloading when app, assets,
+                and component files change. env: ``DASH_HOT_RELOAD``
+            :type dev_tools_hot_reload: bool
 
-        :param dev_tools_hot_reload_interval: Interval in seconds for the
-            client to request the reload hash. Default 3.
-            env: ``DASH_HOT_RELOAD_INTERVAL``
-        :type dev_tools_hot_reload_interval: float
+            :param dev_tools_hot_reload_interval: Interval in seconds for the
+                client to request the reload hash. Default 3.
+                env: ``DASH_HOT_RELOAD_INTERVAL``
+            :type dev_tools_hot_reload_interval: float
 
-        :param dev_tools_hot_reload_watch_interval: Interval in seconds for the
-            server to check asset and component folders for changes.
-            Default 0.5. env: ``DASH_HOT_RELOAD_WATCH_INTERVAL``
-        :type dev_tools_hot_reload_watch_interval: float
+            :param dev_tools_hot_reload_watch_interval: Interval in seconds for the
+                server to check asset and component folders for changes.
+                Default 0.5. env: ``DASH_HOT_RELOAD_WATCH_INTERVAL``
+            :type dev_tools_hot_reload_watch_interval: float
 
-        :param dev_tools_hot_reload_max_retry: Maximum number of failed reload
-            hash requests before failing and displaying a pop up. Default 8.
-            env: ``DASH_HOT_RELOAD_MAX_RETRY``
-        :type dev_tools_hot_reload_max_retry: int
+            :param dev_tools_hot_reload_max_retry: Maximum number of failed reload
+                hash requests before failing and displaying a pop up. Default 8.
+                env: ``DASH_HOT_RELOAD_MAX_RETRY``
+            :type dev_tools_hot_reload_max_retry: int
 
-        :param dev_tools_silence_routes_logging: Silence the `werkzeug` logger,
-            will remove all routes logging. Enabled with debugging by default
-            because hot reload hash checks generate a lot of requests.
-            env: ``DASH_SILENCE_ROUTES_LOGGING``
-        :type dev_tools_silence_routes_logging: bool
+            :param dev_tools_silence_routes_logging: Silence the `werkzeug` logger,
+                will remove all routes logging. Enabled with debugging by default
+                because hot reload hash checks generate a lot of requests.
+                env: ``DASH_SILENCE_ROUTES_LOGGING``
+            :type dev_tools_silence_routes_logging: bool
 
-        :param dev_tools_prune_errors: Reduce tracebacks to just user code,
-            stripping out Flask and Dash pieces. Only available with debugging.
-            `True` by default, set to `False` to see the complete traceback.
-            env: ``DASH_PRUNE_ERRORS``
-        :type dev_tools_prune_errors: bool
+            :param dev_tools_prune_errors: Reduce tracebacks to just user code,
+                stripping out Flask and Dash pieces. Only available with debugging.
+                `True` by default, set to `False` to see the complete traceback.
+                env: ``DASH_PRUNE_ERRORS``
+            :type dev_tools_prune_errors: bool
 
-        :param flask_run_options: Given to `Flask.run`
-
-        :return:
+            :param flask_run_options: Given to `Flask.run`
         """
 
         # Verify port value
@@ -426,14 +458,47 @@ class DashManager:
         self.server.run(host=host, port=port, debug=debug, **flask_run_options)
 
     def app_context(self) -> AppContext:
-        """Create an :class:`~flask.ctx.AppContext`. Use as a ``with``
-        block to push the context, which will make :data:`current_app`
-        point at this application.
+        """
+            Create an :class:`~flask.ctx.AppContext`. Use as a ``with``
+            block to push the context, which will make :data:`current_app`
+            point at this application.
 
-        ::
+            ::
 
-            with app.app_context():
-                init_db()
+                with app.app_context():
+                    init_db()
 
         """
         return self.server.app_context()
+    
+    def add_config(self, obj: object | str) -> None:
+        """
+            Updates the values from the given object.  An object can be of one
+            of the following two types:
+
+            -   a string: in this case the object with that name will be imported
+            -   an actual object reference: that object is used directly
+
+            Objects are usually either modules or classes. :meth:`from_object`
+            loads only the uppercase attributes of the module/class. A ``dict``
+            object will not work with :meth:`from_object` because the keys of a
+            ``dict`` are not attributes of the ``dict`` class.
+
+            Example of module-based configuration::
+
+                manager.add_config('yourapplication.default_config')
+                from yourapplication import default_config
+                manager.add_config(default_config)
+
+            Nothing is done to the object before loading. If the object is a
+            class and has ``@property`` attributes, it needs to be
+            instantiated before being passed to this method.
+
+            You should not use this function to load the actual configuration but
+            rather configuration defaults.  The actual config should be loaded
+            with :meth:`from_pyfile` and ideally from a location not within the
+            package because the package might be installed system wide.
+
+            :param obj: an import name or object
+        """
+        self.server.config.from_object(obj)

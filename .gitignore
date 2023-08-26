@@ -155,3 +155,4 @@ cython_debug/
 
 test_app.py
 .vscode
+example
