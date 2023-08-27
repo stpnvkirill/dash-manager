@@ -37,6 +37,10 @@ class BaseView(BaseViewMetaClass):
     """
     def __init__(self, app=None, name=None, category=None, menu_icon=None, visible=True) -> None:
         """
+            Base app view.
+            Derive from this class to implement your interface piece.
+
+
             Constructor.
 
             :param app:
@@ -121,6 +125,11 @@ class DashManager:
                  external_scripts=None,
                 external_stylesheets=None,) -> None:
         """
+            The DashManager object implements a Flask application and acts as the central
+            object. Once created, it will act as a central registry for 
+            all Dash applications and blueprints.
+
+
             Constructor.
 
             :param name:
