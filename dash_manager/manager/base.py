@@ -13,10 +13,10 @@ import typing
 
 from dash import Dash
 from functools import wraps
-from flask import Flask, Blueprint, abort
 from flask.ctx import AppContext
-from .menu import MenuCategory, MenuView, MenuBluprint
+from flask import Flask, Blueprint, abort
 from dash.development.base_component import Component
+from .menu import MenuCategory, MenuView, MenuBluprint
 from .template import BaseTemplate, BootstrapTemplate, MantineTemplate
 
 
