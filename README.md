@@ -49,7 +49,8 @@ Dash manager always strives to support the latest versions, so there's no need t
 
 ## Creating your app
 
-After you've installed Dash Manager, you can create a recommended application structure. Go to the directory where you want your project to be located and enter:
+After you've installed Dash Manager, you can create a recommended application structure. Go to the directory where you want 
+your project to be located and enter:
 
 ```bash
 dash_manager new *
@@ -80,6 +81,33 @@ The resulting project is a basic application that can be run via wsgi.py:
 ```bash
 python wsgi.py
 ```
+
+## Protecting
+
+Dash Manager lets you define access control rules on each of your view classes by simply 
+overriding the is_accessible method. How you implement the logic is up to you, but if you were 
+to use a low-level library like Flask-Login, then restricting access could be as simple as:
+
+```python
+from dash_manager import BaseView
+from flask import redirect, url_for
+from flask_login import current_user
+
+
+class MyView(BaseView):
+
+    def is_accessible(self):
+        return current_user and current_user.is_authenticated
+
+    def inaccessible_callback(self, name, **kwargs):
+        # redirect to login page if user doesn't have access
+        return redirect(url_for('login', next=request.url))
+```
+
+
+In the navigation menu, components that are not accessible to a particular user will not be 
+displayed for that user. The main drawback is that you still need to implement all of the 
+relevant login, registration, and account management views yourself.
 
 
 ## Customization

@@ -92,17 +92,16 @@ class BaseTemplate(object):
         return []
 
     def _layout(self, dash_app):
-        server = self.manager.server
-        layout = dash_app.layout
-        layout = layout() if callable(layout) else layout
-        menu_structure = self.manager.menu()
-        links = self.manager._menu_links
+
+        layout = dash_app.layout        
 
         def shell():
-            with server.app_context():
-                res = self.app_container(self.navbar(
-                    menu_structure, links), layout, self.footer())
-                return res
+            l = layout() if callable(layout) else layout
+            menu_structure = self.manager.menu()
+            links = self.manager._menu_links
+            res = self.app_container(self.navbar(
+                menu_structure, links), l, self.footer())
+            return res
 
         return shell
 

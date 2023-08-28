@@ -86,6 +86,9 @@ class BaseView(BaseViewMetaClass):
         """
         return True
 
+    def inaccessible_callback(self):
+        return abort(401)
+    
     def embed(self, server) -> None:
         """
             Embed and secure the application on a single server
@@ -342,7 +345,7 @@ class DashManager:
             self.server = server
 
     def menu(self):
-        return self._menu
+        return [menu for menu in self._menu if menu._view.is_accessible()]
     
     def run(
         self,
