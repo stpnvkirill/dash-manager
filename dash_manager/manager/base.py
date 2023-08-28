@@ -113,7 +113,7 @@ class BaseView(BaseViewMetaClass):
         @wraps(func)
         def decorated_view(*args, **kwargs):
             if not self.is_accessible():
-                return abort(401)
+                return self.inaccessible_callback()
             return func(*args, **kwargs)
 
         return decorated_view
