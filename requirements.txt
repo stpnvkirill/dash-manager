@@ -1,6 +1,8 @@
 flask
+flask-login
+flask-sqlalchemy
 
 dash
-dash-bootstrap-components
-dash-mantine-components
 dash-iconify
+dash-mantine-components
+dash-bootstrap-components

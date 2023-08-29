@@ -11,11 +11,26 @@
 
 import copy
 
-import dash_bootstrap_components as dbc
-import dash_mantine_components as dmc
-
-from dash_iconify import DashIconify
 from dash import html, Input, Output, State, dcc
+
+try:
+    import dash_bootstrap_components as dbc
+    bootstrap = True
+except:
+    bootstrap = None
+
+try:
+    import dash_mantine_components as dmc
+    mantine = True
+except:
+    mantine = None
+
+try:
+    from dash_iconify import DashIconify
+    iconify = True
+except:
+    iconify = None
+
 
 
 class BaseTemplate(object):
@@ -113,6 +128,10 @@ class BaseTemplate(object):
 class BootstrapTemplate(BaseTemplate):
     FLUID = False
 
+    def __init__(self, manager) -> None:
+        assert (bootstrap and iconify), "To use the BootstrapTemplate, install dash_bootstrap_components & dash_iconify"
+        super().__init__(manager)
+
     def add_links(self):
         return [dbc.Button(DashIconify(icon='radix-icons:blending-mode', height=25),
                            color='secondary', id="color-scheme-toggle", n_clicks=0)]
@@ -204,6 +223,10 @@ class BootstrapTemplate(BaseTemplate):
 class MantineTemplate(BaseTemplate):
     THEME = {}
     CONTAINER_SIZE = 'xxl'
+
+    def __init__(self, manager) -> None:
+        assert (mantine and iconify), "To use the MantineTemplate, install dash_mantine_components & dash_iconify"
+        super().__init__(manager)
 
     def add_links(self):
         return [dmc.ActionIcon(
