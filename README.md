@@ -142,3 +142,36 @@ class MyTemplate(BaseTemplate):
 ```
 
 Read more about this here
+
+
+## Grouping Views
+
+When adding a view, specify a value for the category parameter to group related views together in the menu:
+
+```python
+manager.add_view(BaseView(page, category='Dropdown'))
+manager.add_view(BaseView(page2, category='Dropdown'))
+```
+
+This will create a top-level menu item named ‘Dropdown’, and a drop-down containing links to the two views.
+
+
+And to add arbitrary buttons to the menu:
+
+```python
+btn = dmc.Anchor(
+    dmc.ActionIcon(
+        DashIconify(
+            icon='radix-icons:avatar', width=22
+        ),
+        variant="outline",
+        radius='md',
+        size=36,
+        color='indigo',
+    ), 
+    href='/profile', 
+    refresh=True)
+
+
+manager.add_link(btn)
+```
