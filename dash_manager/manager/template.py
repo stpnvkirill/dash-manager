@@ -113,7 +113,7 @@ class BaseTemplate(object):
         def shell():
             l = layout() if callable(layout) else layout
             menu_structure = self.manager.menu()
-            links = self.manager._menu_links
+            links = [l() if callable(l) else l for l in self.manager._menu_links]
             res = self.app_container(self.navbar(
                 menu_structure, links), l, self.footer())
             return res
@@ -426,7 +426,7 @@ class MantineTemplate(BaseTemplate):
                 ]
             ),
             theme={"colorScheme": 'indigo'},
-            id="mantine-docs-theme-provider",
+            id="mantine-theme-provider",
             withGlobalStyles=True,
             withNormalizeCSS=True,
         )
@@ -434,7 +434,7 @@ class MantineTemplate(BaseTemplate):
     def add_callbacks(self, dash_app):
         dash_app.clientside_callback(
             """ function(data) { return data } """,
-            Output("mantine-docs-theme-provider", "theme"),
+            Output("mantine-theme-provider", "theme"),
             Input("theme-store", "data"),
         )
 

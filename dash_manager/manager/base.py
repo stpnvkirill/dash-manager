@@ -188,6 +188,8 @@ class DashManager:
         self.external_stylesheets = external_stylesheets
         self.external_scripts = external_scripts
 
+        self._before_run_server = []
+
     def init_template_mode(self,template_mode):
         template_dct = {'bootstrap':BootstrapTemplate, 'mantine':MantineTemplate}
         template_mode = template_mode or 'bootstrap'
@@ -466,6 +468,9 @@ class DashManager:
                 dev_tools_prune_errors,
             )
 
+        with self.server.app_context():
+            for func in self._before_run_server:
+                func()
                    
         self.server.run(host=host, port=port, debug=debug, **flask_run_options)
 
@@ -514,3 +519,7 @@ class DashManager:
             :param obj: an import name or object
         """
         self.server.config.from_object(obj)
+    
+    def before_run_server(self,func):
+        if callable(func):
+            self._before_run_server.append(func)
