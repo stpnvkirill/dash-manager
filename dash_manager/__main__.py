@@ -10,7 +10,7 @@ import textwrap
 
 import click
 
-from info import __version__
+from .info import __version__
 
 log = logging.getLogger(__name__)
 
@@ -148,7 +148,7 @@ def cli():
 @common_options
 def new_command(project_directory):
     """Create a new Dash project"""
-    from commands import new
+    from .commands import new
 
     new(project_directory)
 

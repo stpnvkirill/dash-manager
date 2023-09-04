@@ -14,11 +14,11 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     install_requires=[                      
-        "dash>=2.11.1",      
+        "dash>=2.11.1",
         "dash-iconify>=0.1.2",
         "dash-mantine-components>=0.12.1",
-        "dash-bootstrap-components>=1.4.2"  ,
-        "setuptools=>66.0.0"                              
+        "dash-bootstrap-components>=1.4.2",
+        "setuptools>=66.0.0"                              
     ],                                             
     url="https://github.com/stpnvkirill/dash-manager",
     packages=setuptools.find_packages(),
@@ -27,4 +27,9 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License", 
         "Operating System :: OS Independent",   
     ),
+    entry_points={
+        'console_scripts': [
+            'dash-manager = dash_manager:__main__.cli'
+        ]
+    }
 )
