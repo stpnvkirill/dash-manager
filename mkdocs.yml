@@ -1,0 +1,80 @@
+site_name: Dash Manager
+site_author: Kirill Stepanov
+site_description: >-
+  Dash Manager is an easy-to-use device that allows you to combine multiple Dash applications on a single Flask server. 
+  A layout wrapper is also adding for each application into which common elements, such as the navigation bar, can be encoded.
+
+# Repository
+repo_name: stpnvkirill/dash-manager
+repo_url: https://github.com/stpnvkirill/dash-manager
+
+# Copyright
+copyright: Copyright &copy; 2023 Kirill Stepanov
+
+theme:
+  name: material
+  palette:
+  - media: '(prefers-color-scheme: light)'
+    scheme: default
+    primary: blue grey
+    accent: deep orange
+    toggle:
+      icon: material/lightbulb
+      name: Switch to dark mode
+  - media: '(prefers-color-scheme: dark)'
+    scheme: slate
+    primary: blue grey
+    accent: deep orange
+    toggle:
+      icon: material/lightbulb-outline
+      name: Switch to light mode
+  features:
+    - search.suggest
+    - search.highlight
+    - content.tabs.link
+    - navigation.indexes
+    - content.tooltips
+    - navigation.path
+    - content.code.annotate
+    - content.code.copy
+    - content.code.select
+    - toc.integrate
+  font:
+    text: Roboto
+    code: Roboto Mono
+  icon:
+    repo: fontawesome/brands/github-alt
+  language: en
+
+markdown_extensions:
+  attr_list:
+  md_in_html:
+  toc:
+    permalink: true
+  markdown.extensions.codehilite:
+    guess_lang: false
+  admonition:
+  codehilite:
+  extra:
+  pymdownx.superfences:
+    custom_fences:
+    - name: mermaid
+      class: mermaid
+      format: !!python/name:pymdownx.superfences.fence_code_format ''
+  pymdownx.tabbed:
+    alternate_style: true
+  pymdownx.tasklist:
+    custom_checkbox: true
+
+
+extra_css:
+  - assets/css/terminal.css
+extra_javascript:
+  - assets/js/terminal.js
+  - assets/js/custom.js
+
+nav:
+  - Getting started: index.md
+  - Protected: protected.md
+  - Customization: customization.md
+  - Authors: authors.md

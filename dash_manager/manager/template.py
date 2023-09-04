@@ -125,6 +125,11 @@ class BaseTemplate(object):
         dash_app.layout = self._layout(dash_app=dash_app)
 
 
+class ClearTemplate(BaseTemplate):
+    def _app_shell(self, dash_app):
+        pass
+
+
 class BootstrapTemplate(BaseTemplate):
     FLUID = False
 

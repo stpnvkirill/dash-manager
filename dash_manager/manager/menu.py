@@ -33,7 +33,12 @@ class BaseMenu(object):
         return False
 
     def get_children(self):
-        return [c for c in self._children]
+        return [c for c in self._children if c.check_access()]
+
+    def check_access(self):
+        if self.is_category():
+            return bool(len(self.get_children()))
+        return self._view.is_accessible()
 
 class MenuCategory(BaseMenu):
     """
@@ -67,7 +72,6 @@ class MenuView(BaseMenu):
         url = self._view.href
 
         return url
-
 
 class MenuBluprint(BaseMenu):
     def __init__(self, name, url_prefix, icon=None, manager=None):

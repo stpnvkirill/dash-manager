@@ -1,9 +1,25 @@
-# Dash Manager
+# Welcome to Dash Manager
 
-Dash Manager is an easy-to-use device that allows you to combine multiple Dash applications on a single Flask server. 
-A layout wrapper is also adding for each application into which common elements, such as the navigation bar, can be encoded.
+
+Dash-manager is published as a Python package and can be installed with pip, ideally by using a virtual environment. 
+Open up a terminal and install dash-manager with:
+
+<div class="termy">
+
+```console
+$ pip install dash-manager
+
+---> 100%
+```
+
+</div>
+
+This will automatically install compatible versions of all dependencies: Flask, Dash, Dash Bootstrap & Dash Mantine. 
+Dash manager always strives to support the latest versions, so there's no need to install those packages separately.
 
 ## Simple Example
+
+An example of a basic three-page application. This code will combine applications and create a common navigation bar:
 
 ```python
 from dash_manager import DashManager, BaseView
@@ -33,18 +49,8 @@ manager.add_view(BaseView(page3))
 manager.run(debug=True)
 ```
 
+Manager has the same startup method as the Dash application. In addition, each dash application will have a debug panel
 
-## Instalation
-
-Dash-manager is published as a Python package and can be installed with pip, ideally by using a virtual environment. 
-Open up a terminal and install dash-manager with:
-
-```bash
-pip install dash-manager
-```
-
-This will automatically install compatible versions of all dependencies: Flask, Dash, Dash Bootstrap & Dash Mantine. 
-Dash manager always strives to support the latest versions, so there's no need to install those packages separately.
 
 
 ## Creating your app
@@ -52,9 +58,14 @@ Dash manager always strives to support the latest versions, so there's no need t
 After you've installed Dash Manager, you can create a recommended application structure. Go to the directory where you want 
 your project to be located and enter:
 
-```bash
-dash_manager new *
+<div class="termy">
+
+```console
+$ dash_manager new *
 ```
+
+</div>
+
 
 This will create the following structure, where in each file there will be detailed descriptions:
 
@@ -78,9 +89,13 @@ This will create the following structure, where in each file there will be detai
 
 The resulting project is a basic application that can be run via wsgi.py:
 
-```bash
-python wsgi.py
+<div class="termy">
+
+```console
+$ python wsgi.py
 ```
+
+</div>
 
 ## Protecting
 
@@ -141,7 +156,7 @@ class MyTemplate(BaseTemplate):
 
 ```
 
-Read more about this here
+Read more about this [here](/protected/)
 
 
 ## Grouping Views

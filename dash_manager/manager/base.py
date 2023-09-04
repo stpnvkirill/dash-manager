@@ -17,7 +17,7 @@ from flask.ctx import AppContext
 from flask import Flask, Blueprint, abort
 from dash.development.base_component import Component
 from .menu import MenuCategory, MenuView, MenuBluprint
-from .template import BaseTemplate, BootstrapTemplate, MantineTemplate
+from .template import BaseTemplate, BootstrapTemplate, MantineTemplate, ClearTemplate
 
 
 class BaseViewMetaClass:
@@ -142,8 +142,8 @@ class DashManager:
             :param url:
                 Base URL
             :param template_mode:
-                Base template path. Defaults to `mantine`. If you want to use
-                Bootstrap to `bootstrap` or create custom template.
+                Base template path. Defaults to `bootstrap`. You can also use `mantine` or "clear", 
+                or create your own custom template.
             :param category_icon:
                 A dict of category names as keys and html classes as values to be added to menu category icons.
                 Example: 
@@ -191,7 +191,7 @@ class DashManager:
         self._before_run_server = []
 
     def init_template_mode(self,template_mode):
-        template_dct = {'bootstrap':BootstrapTemplate, 'mantine':MantineTemplate}
+        template_dct = {'bootstrap':BootstrapTemplate, 'mantine':MantineTemplate, 'clear': ClearTemplate}
         template_mode = template_mode or 'bootstrap'
         if isinstance(template_mode, str):
             self.template = template_dct.get(template_mode, BaseTemplate)(self)
@@ -347,7 +347,7 @@ class DashManager:
             self.server = server
 
     def menu(self):
-        return [menu for menu in self._menu if menu._view.is_accessible()]
+        return [menu for menu in self._menu if menu.check_access()]
     
     def run(
         self,
