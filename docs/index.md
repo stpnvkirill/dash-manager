@@ -61,7 +61,7 @@ your project to be located and enter:
 <div class="termy">
 
 ```console
-$ dash_manager new *
+$ dash-manager new .
 ```
 
 </div>

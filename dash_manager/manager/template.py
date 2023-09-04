@@ -132,6 +132,7 @@ class ClearTemplate(BaseTemplate):
 
 class BootstrapTemplate(BaseTemplate):
     FLUID = False
+    NAVBAR_COLOR = 'secondary'
 
     def __init__(self, manager) -> None:
         assert (bootstrap and iconify), "To use the BootstrapTemplate, install dash_bootstrap_components & dash_iconify"
@@ -175,7 +176,7 @@ class BootstrapTemplate(BaseTemplate):
                 ],
                 fluid=self.FLUID
             ),
-            color='secondary',
+            color=self.NAVBAR_COLOR,
             dark=True
         )
 

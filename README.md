@@ -53,7 +53,7 @@ After you've installed Dash Manager, you can create a recommended application st
 your project to be located and enter:
 
 ```bash
-dash_manager new *
+dash-manager new .
 ```
 
 This will create the following structure, where in each file there will be detailed descriptions:

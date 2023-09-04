@@ -36,6 +36,7 @@ an example of a basic implementation.
 ```python
 class BootstrapTemplate(BaseTemplate):
     FLUID = False
+    NAVBAR_COLOR = 'secondary'
 
 
     def add_external_stylesheets(self):
@@ -132,7 +133,7 @@ class BootstrapTemplate(BaseTemplate):
                 ],
                 fluid=self.FLUID
             ),
-            color='secondary',
+            color=self.NAVBAR_COLOR,
             dark=True
         )
 

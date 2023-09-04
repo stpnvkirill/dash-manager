@@ -28,7 +28,7 @@ located and enter:
 <div class="termy">
 
 ```console
-$ dash_manager protected_new *
+$ dash-manager protected_new *
 ```
 
 </div>
